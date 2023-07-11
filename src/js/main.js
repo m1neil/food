@@ -4,13 +4,17 @@ const tabsContent = document.querySelectorAll('.tabcontent');
 
 const hideNavigationItem = () => {
 	navTabs.forEach(item => {
-		item.classList.remove('tabheader__item_active');
+		if (item.classList.contains('tabheader__item_active')) {
+			item.classList.remove('tabheader__item_active');
+		}
 	});
 };
 
 const hideTabsContent = () => {
 	tabsContent.forEach(item => {
-		item.classList.remove('tabcontent_active');
+		if (item.classList.contains('tabcontent_active')) {
+			item.classList.remove('tabcontent_active');
+		}
 	});
 };
 
