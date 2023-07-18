@@ -98,3 +98,93 @@ function setTimer(selectorTimer, deadline) {
 function addZeroForValue(value) {
 	return value < 10 ? `0${value}` : value;
 }
+
+// Modal
+
+const bodyController = {
+	widthScroll: `${window.innerWidth - document.body.clientWidth}px`,
+	isInteraction: true,
+
+	lockBody() {
+		document.body.classList.add('lock');
+		document.body.style.paddingRight = this.widthScroll;
+
+		this.lockInteraction();
+	},
+
+	unLockBody() {
+		this.lockInteraction();
+
+		setTimeout(() => {
+			document.body.classList.remove('lock');
+			document.body.style.paddingRight = '0';
+		}, 600);
+	},
+
+	lockInteraction() {
+		this.isInteraction = false;
+		setTimeout(() => {
+			this.isInteraction = true;
+		}, 600);
+	},
+};
+
+const btnLinks = document.querySelectorAll('[data-modal]');
+
+if (btnLinks.length) {
+	btnLinks.forEach(btn => {
+		btn.addEventListener('click', openModal);
+	});
+}
+
+function openModal(event) {
+	const target = event.target;
+
+	console.log(bodyController.isInteraction);
+	if (
+		target?.getAttribute('data-modal') &&
+		document.querySelector(target.getAttribute('data-modal')) &&
+		bodyController.isInteraction
+	) {
+		const modal = document.querySelector(target.getAttribute('data-modal'));
+		modal.classList.add('open');
+
+		bodyController.lockBody();
+
+		modal.addEventListener('click', closeModal);
+		window.addEventListener('keydown', closeModalOnButton);
+	}
+}
+
+function closeModal(event) {
+	const target = event.target;
+
+	if (!bodyController.isInteraction) return;
+
+	if (
+		(target && target.matches('.modal__close')) ||
+		!target.closest('.modal__content')
+	) {
+		target.closest('.modal').classList.remove('open');
+
+		bodyController.unLockBody();
+
+		target.closest('.modal').removeEventListener('click', closeModal);
+		window.removeEventListener('keydown', closeModalOnButton);
+	}
+}
+
+function closeModalOnButton(event) {
+	if (!bodyController.isInteraction) return;
+
+	if (event.code === 'Escape') {
+		const modal = document.querySelector('.modal.open');
+
+		modal.classList.remove('open');
+
+		bodyController.unLockBody();
+
+		modal.removeEventListener('click', closeModal);
+		window.removeEventListener('keydown', closeModalOnButton);
+	}
+}
