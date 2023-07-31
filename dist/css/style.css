@@ -652,3 +652,9 @@ body.lock {
   width: 280px;
   margin: 0 auto;
 }
+
+.status {
+  margin-top: 25px;
+  font-size: 18px;
+  text-align: center;
+}
