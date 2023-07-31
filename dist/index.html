@@ -20,7 +20,7 @@
 			</nav>
 		</div>
 		<div class="header__right-block">
-			<button data-modal=".modal" class="btn btn_white">Связаться с нами</button>
+			<button data-modal="#call-us" class="btn btn_white">Связаться с нами</button>
 		</div>
 	</header>
 	<div class="sidepanel">
@@ -95,7 +95,7 @@
 				</div>
 			</div>
 			<div class="offer__action">
-				<button data-modal=".modal" class="btn btn_dark">Связаться с нами</button>
+				<button data-modal="#call-us" class="btn btn_dark">Связаться с нами</button>
 			</div>
 		</div>
 		<div class="container">
@@ -269,7 +269,7 @@
 		</div>
 	</footer>
 
-	<div class="modal">
+	<div id="call-us" class="modal">
 		<div class="modal__dialog">
 			<div class="modal__content">
 				<form action="php/server.php">
@@ -282,7 +282,14 @@
 			</div>
 		</div>
 	</div>
-
+	<div id="thanks-modal" class="modal">
+		<div class="modal__dialog">
+			<div class="modal__content">
+				<div class="modal__close">&times;</div>
+				<div class="modal__title"></div>
+			</div>
+		</div>
+	</div>
 	<script defer src="js/script.js"></script>
 </body>
 

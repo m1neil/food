@@ -140,7 +140,6 @@ if (btnLinks.length) {
 function openModal(event) {
 	const target = event.target;
 
-	console.log(bodyController.isInteraction);
 	if (
 		target?.getAttribute('data-modal') &&
 		document.querySelector(target.getAttribute('data-modal')) &&
@@ -254,7 +253,7 @@ forms.forEach(form => processForm(form));
 
 const messageForUser = {
 	success: 'Спасибо за заказ!',
-	loading: 'Загрузка...',
+	loading: 'icons/spinner.svg',
 	error: 'Ошибка!',
 };
 
@@ -264,27 +263,59 @@ function processForm(form) {
 
 		const statusMessage = document.createElement('div');
 		statusMessage.classList.add('status');
-		statusMessage.textContent = messageForUser.loading;
+		statusMessage.innerHTML = `<img src=${messageForUser.loading} alt="Icon loading">`;
 
 		form.after(statusMessage);
 
 		const request = new XMLHttpRequest();
 		request.open('POST', 'php/server.php');
 
-		const formData = new FormData();
+		const formData = new FormData(form);
 
 		request.send(formData);
 
 		request.addEventListener('load', () => {
 			if (request.status === 200) {
-				statusMessage.textContent = messageForUser.success;
-				form.reset();
+				statusMessage.remove();
+				closeMod();
 				setTimeout(() => {
-					statusMessage.remove();
-				}, 2000);
+					openModalThanks(messageForUser.success);
+				}, 600);
 			} else {
-				statusMessage.textContent = messageForUser.error;
+				statusMessage.remove();
+				closeMod();
+				setTimeout(() => {
+					openModalThanks(messageForUser.error);
+				}, 600);
 			}
+			form.reset();
 		});
 	});
+}
+
+function closeMod() {
+	const activeModal = document.querySelector('.modal.open');
+
+	if (!activeModal) return;
+
+	bodyController.unLockBody();
+	activeModal.classList.remove('open');
+	activeModal.removeEventListener('click', closeModal);
+	window.removeEventListener('keydown', closeModalOnButton);
+}
+
+function openModalThanks(message) {
+	if (!bodyController.isInteraction) return;
+
+	const thanksModal = document.querySelector('#thanks-modal'),
+		modalTitle = thanksModal.querySelector('.modal__title');
+
+	modalTitle.textContent = message;
+
+	bodyController.lockBody();
+
+	thanksModal.classList.add('open');
+
+	thanksModal.addEventListener('click', closeModal);
+	window.addEventListener('keydown', closeModalOnButton);
 }
