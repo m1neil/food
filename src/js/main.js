@@ -267,29 +267,30 @@ function processForm(form) {
 
 		form.after(statusMessage);
 
-		const request = new XMLHttpRequest();
-		request.open('POST', 'php/server.php');
-
 		const formData = new FormData(form);
 
-		request.send(formData);
-
-		request.addEventListener('load', () => {
-			if (request.status === 200) {
-				statusMessage.remove();
+		fetch('php/server.php', {
+			method: 'POST',
+			body: formData,
+		})
+			.then(data => data.text())
+			.then(data => {
+				console.log(data);
 				closeMod();
 				setTimeout(() => {
 					openModalThanks(messageForUser.success);
 				}, 600);
-			} else {
-				statusMessage.remove();
+			})
+			.catch(() => {
 				closeMod();
 				setTimeout(() => {
 					openModalThanks(messageForUser.error);
 				}, 600);
-			}
-			form.reset();
-		});
+			})
+			.finally(() => {
+				statusMessage.remove();
+				form.reset();
+			});
 	});
 }
 

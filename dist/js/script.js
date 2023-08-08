@@ -197,24 +197,23 @@ function processForm(form) {
     statusMessage.classList.add('status');
     statusMessage.innerHTML = `<img src=${messageForUser.loading} alt="Icon loading">`;
     form.after(statusMessage);
-    const request = new XMLHttpRequest();
-    request.open('POST', 'php/server.php');
     const formData = new FormData(form);
-    request.send(formData);
-    request.addEventListener('load', () => {
-      if (request.status === 200) {
-        statusMessage.remove();
-        closeMod();
-        setTimeout(() => {
-          openModalThanks(messageForUser.success);
-        }, 600);
-      } else {
-        statusMessage.remove();
-        closeMod();
-        setTimeout(() => {
-          openModalThanks(messageForUser.error);
-        }, 600);
-      }
+    fetch('php/server.php', {
+      method: 'POST',
+      body: formData
+    }).then(data => data.text()).then(data => {
+      console.log(data);
+      closeMod();
+      setTimeout(() => {
+        openModalThanks(messageForUser.success);
+      }, 600);
+    }).catch(() => {
+      closeMod();
+      setTimeout(() => {
+        openModalThanks(messageForUser.error);
+      }, 600);
+    }).finally(() => {
+      statusMessage.remove();
       form.reset();
     });
   });
