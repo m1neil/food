@@ -222,30 +222,6 @@ class MenuCard {
 	}
 }
 
-new MenuCard(
-	'img/tabs/vegy.jpg',
-	'vegy',
-	'Меню "Фитнес"',
-	'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-	229
-).createElement('.menu__field .container');
-
-new MenuCard(
-	'img/tabs/elite.jpg',
-	'elite',
-	'Меню “Премиум”',
-	'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
-	550
-).createElement('.menu__field .container');
-
-new MenuCard(
-	'img/tabs/post.jpg',
-	'img/tabs/post.jpg',
-	'Меню "Постное"',
-	'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
-	430
-).createElement('.menu__field .container');
-
 // form ----------------------------------------------------------------------------------------------------
 
 const forms = document.querySelectorAll('form');
@@ -255,6 +231,30 @@ const messageForUser = {
 	success: 'Спасибо за заказ!',
 	loading: 'icons/spinner.svg',
 	error: 'Ошибка!',
+};
+
+const postData = async (url, data) => {
+	const response = await fetch(url, {
+		method: 'POST',
+		headers: {
+			'Content-type': 'application/json',
+		},
+		body: data,
+	});
+
+	return await response.json();
+};
+
+const getData = async url => {
+	const response = await fetch(url);
+
+	if (!response.ok) {
+		throw new Error(
+			`Can't fetch url: ${response.url}, status: ${response.status}`
+		);
+	}
+
+	return await response.json();
 };
 
 function processForm(form) {
@@ -269,13 +269,10 @@ function processForm(form) {
 
 		const formData = new FormData(form);
 
-		fetch('php/server.php', {
-			method: 'POST',
-			body: formData,
-		})
-			.then(data => data.text())
-			.then(data => {
-				console.log(data);
+		const formDataJson = JSON.stringify(Object.fromEntries(formData.entries()));
+
+		postData('http://localhost:3000/requests', formDataJson)
+			.then(() => {
 				closeMod();
 				setTimeout(() => {
 					openModalThanks(messageForUser.success);
@@ -320,3 +317,13 @@ function openModalThanks(message) {
 	thanksModal.addEventListener('click', closeModal);
 	window.addEventListener('keydown', closeModalOnButton);
 }
+
+getData('http://localhost:3000/menu')
+	.then(data => {
+		data.forEach(({ img, altimg, title, descr, price }) => {
+			new MenuCard(img, altimg, title, descr, price).createElement(
+				'.menu__field .container'
+			);
+		});
+	})
+	.catch(e => console.log(e));
