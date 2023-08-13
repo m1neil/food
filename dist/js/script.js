@@ -247,8 +247,8 @@ function openModalThanks(message) {
   thanksModal.addEventListener('click', closeModal);
   window.addEventListener('keydown', closeModalOnButton);
 }
-getData('http://localhost:3000/menu').then(data => {
-  data.forEach(_ref => {
+axios.get('http://localhost:3000/menu').then(response => {
+  response.data.forEach(_ref => {
     let {
       img,
       altimg,
@@ -258,7 +258,17 @@ getData('http://localhost:3000/menu').then(data => {
     } = _ref;
     new MenuCard(img, altimg, title, descr, price).createElement('.menu__field .container');
   });
-}).catch(e => console.log(e));
+});
+
+// getData('http://localhost:3000/menu')
+// 	.then(data => {
+// 		data.forEach(({ img, altimg, title, descr, price }) => {
+// 			new MenuCard(img, altimg, title, descr, price).createElement(
+// 				'.menu__field .container'
+// 			);
+// 		});
+// 	})
+// 	.catch(e => console.log(e));
 /******/ })()
 ;
 //# sourceMappingURL=script.js.map
