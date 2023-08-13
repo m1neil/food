@@ -1,254 +1,91 @@
 /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
 var __webpack_exports__ = {};
 /*!************************!*\
   !*** ./src/js/main.js ***!
   \************************/
-// Tabs
-const navWrapper = document.querySelector('.tabheader__items');
-const navTabs = navWrapper.querySelectorAll('.tabheader__item');
-const tabsContent = document.querySelectorAll('.tabcontent');
-const hideNavigationItem = () => {
-  navTabs.forEach(item => {
-    if (item.classList.contains('tabheader__item_active')) {
-      item.classList.remove('tabheader__item_active');
-    }
+
+
+const tabs = () => {
+  const tabWrapper = document.querySelector('.tabcontainer');
+  const tabContents = tabWrapper.querySelectorAll('.tabcontent');
+  const tabNavWrap = tabWrapper.querySelector('.tabheader__items');
+  const tabNavItems = tabWrapper.querySelectorAll('.tabheader__item');
+  hideAllTabContents();
+  removeActiveClassTabNavItems();
+  showCurrentTabContent();
+  tabNavWrap.addEventListener('click', event => {
+    const target = event.target;
+    if (!target.classList.contains('tabheader__item')) return;
+    tabNavItems.forEach((item, i) => {
+      if (item === target) {
+        if (tabContents.length < i + 1 || tabNavItems.length < i + 1) return;
+        hideAllTabContents();
+        removeActiveClassTabNavItems();
+        showCurrentTabContent(i);
+      }
+    });
   });
-};
-const hideTabsContent = () => {
-  tabsContent.forEach(item => {
-    if (item.classList.contains('tabcontent_active')) {
-      item.classList.remove('tabcontent_active');
-    }
-  });
-};
-const hideTabsAndNavItems = () => {
-  hideNavigationItem();
-  hideTabsContent();
-};
-const showTabAndNavItem = function () {
-  let index = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-  navTabs[index].classList.add('tabheader__item_active');
-  tabsContent[index].classList.add('tabcontent_active');
-};
-const clickOnNavItem = event => {
-  const target = event.target;
-  if (!target || !target.matches('.tabheader__item')) return;
-  navTabs.forEach((item, index) => {
-    if (item === target) {
-      hideTabsAndNavItems();
-      showTabAndNavItem(index);
-      return;
-    }
-  });
-};
-navWrapper.addEventListener('click', clickOnNavItem);
-
-// Timer
-
-const deadlineTimer = '2023-07-25';
-setTimer('.promotion__timer', deadlineTimer);
-function getRemainingTime(deadline) {
-  const timer = {
-    total: Date.parse(deadline) - Date.now(),
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0
-  };
-  if (timer.total > 0) {
-    timer.days = Math.floor(timer.total / (1000 * 60 * 60 * 24));
-    timer.hours = Math.floor(timer.total / (1000 * 60 * 60) % 24);
-    timer.minutes = Math.floor(timer.total / 1000 / 60 % 60);
-    timer.seconds = Math.floor(timer.total / 1000 % 60);
+  function hideAllTabContents() {
+    tabContents.forEach(tab => tab.classList.remove('tabcontent_active'));
   }
-  return timer;
-}
-function setTimer(selectorTimer, deadline) {
-  const timer = document.querySelector(selectorTimer),
-    days = timer.querySelector('#days'),
-    hours = timer.querySelector('#hours'),
-    minutes = timer.querySelector('#minutes'),
-    seconds = timer.querySelector('#seconds');
-  const intervalTimer = setInterval(updateTimer, 1000);
-  updateTimer();
-  function updateTimer() {
-    const time = getRemainingTime(deadline);
-    days.textContent = addZeroForValue(time.days);
-    hours.textContent = addZeroForValue(time.hours);
-    minutes.textContent = addZeroForValue(time.minutes);
-    seconds.textContent = addZeroForValue(time.seconds);
-    if (time.total <= 0) {
-      clearInterval(intervalTimer);
-    }
+  function removeActiveClassTabNavItems() {
+    tabNavItems.forEach(item => item.classList.remove('tabheader__item_active'));
   }
-}
-function addZeroForValue(value) {
-  return value < 10 ? `0${value}` : value;
-}
-
-// Modal
-
-const bodyController = {
-  widthScroll: `${window.innerWidth - document.body.clientWidth}px`,
-  isInteraction: true,
-  lockBody() {
-    document.body.classList.add('lock');
-    document.body.style.paddingRight = this.widthScroll;
-    this.lockInteraction();
-  },
-  unLockBody() {
-    this.lockInteraction();
-    setTimeout(() => {
-      document.body.classList.remove('lock');
-      document.body.style.paddingRight = '0';
-    }, 600);
-  },
-  lockInteraction() {
-    this.isInteraction = false;
-    setTimeout(() => {
-      this.isInteraction = true;
-    }, 600);
+  function showCurrentTabContent() {
+    let i = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+    tabContents[i].classList.add('tabcontent_active');
+    tabNavItems[i].classList.add('tabheader__item_active');
   }
 };
-const btnLinks = document.querySelectorAll('[data-modal]');
-if (btnLinks.length) {
-  btnLinks.forEach(btn => {
-    btn.addEventListener('click', openModal);
-  });
-}
-function openModal(event) {
-  const target = event.target;
-  if (target?.getAttribute('data-modal') && document.querySelector(target.getAttribute('data-modal')) && bodyController.isInteraction) {
-    const modal = document.querySelector(target.getAttribute('data-modal'));
-    modal.classList.add('open');
-    bodyController.lockBody();
-    modal.addEventListener('click', closeModal);
-    window.addEventListener('keydown', closeModalOnButton);
-  }
-}
-function closeModal(event) {
-  const target = event.target;
-  if (!bodyController.isInteraction) return;
-  if (target && target.matches('.modal__close') || !target.closest('.modal__content')) {
-    target.closest('.modal').classList.remove('open');
-    bodyController.unLockBody();
-    target.closest('.modal').removeEventListener('click', closeModal);
-    window.removeEventListener('keydown', closeModalOnButton);
-  }
-}
-function closeModalOnButton(event) {
-  if (!bodyController.isInteraction) return;
-  if (event.code === 'Escape') {
-    const modal = document.querySelector('.modal.open');
-    modal.classList.remove('open');
-    bodyController.unLockBody();
-    modal.removeEventListener('click', closeModal);
-    window.removeEventListener('keydown', closeModalOnButton);
-  }
-}
-
-// card menu ====================================================================================================
-
+tabs();
 class MenuCard {
-  constructor(imgSrc, imgAlt, title, description, price) {
-    this.imgSrc = imgSrc;
-    this.imgAlt = imgAlt;
+  constructor() {
+    let src = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'src';
+    let alt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'alt';
+    let title = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'title';
+    let text = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'text';
+    let price = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 435;
+    this.src = src;
+    this.alt = alt;
     this.title = title;
-    this.description = description;
-    this.price = price;
+    this.text = text;
+    this.price = this.convertToUAH(price).toFixed(2);
     for (var _len = arguments.length, classes = new Array(_len > 5 ? _len - 5 : 0), _key = 5; _key < _len; _key++) {
       classes[_key - 5] = arguments[_key];
     }
     classes.length > 0 ? this.classes = classes : this.classes = ['menu__item'];
   }
-  createElement(containerSelector) {
-    const wrapper = document.createElement('div');
-    wrapper.classList.add(...this.classes);
-    wrapper.innerHTML = `
-			<img src=${this.imgSrc} alt=${this.imgAlt}>
+  createElement(container) {
+    const card = document.createElement('div');
+    card.classList.add(...this.classes);
+    card.innerHTML = `
+			<img src=${this.src} alt=${this.alt}>
 			<h3 class="menu__item-subtitle">${this.title}</h3>
-			<div class="menu__item-descr">${this.description}</div>
+			<div class="menu__item-descr">${this.text}</div>
 			<div class="menu__item-divider"></div>
 			<div class="menu__item-price">
 				<div class="menu__item-cost">Цена:</div>
 				<div class="menu__item-total"><span>${this.price}</span> грн/день</div>
 			</div>
 		`;
-    document.querySelector(containerSelector).append(wrapper);
+    if (document.querySelector(container)) {
+      document.querySelector(container).append(card);
+    }
+  }
+  convertToUAH(value) {
+    return value * 36.6;
   }
 }
-
-// form ----------------------------------------------------------------------------------------------------
-
-const forms = document.querySelectorAll('form');
-forms.forEach(form => processForm(form));
-const messageForUser = {
-  success: 'Спасибо за заказ!',
-  loading: 'icons/spinner.svg',
-  error: 'Ошибка!'
-};
-const postData = async (url, data) => {
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-type': 'application/json'
-    },
-    body: data
-  });
-  return await response.json();
-};
 const getData = async url => {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Can't fetch url: ${response.url}, status: ${response.status}`);
+  const request = await fetch(url);
+  if (!request.ok) {
+    throw new Error(`not fetch data to url ${url}, status = ${request.status}`);
   }
-  return await response.json();
+  return await request.json();
 };
-function processForm(form) {
-  form.addEventListener('submit', event => {
-    event.preventDefault();
-    const statusMessage = document.createElement('div');
-    statusMessage.classList.add('status');
-    statusMessage.innerHTML = `<img src=${messageForUser.loading} alt="Icon loading">`;
-    form.after(statusMessage);
-    const formData = new FormData(form);
-    const formDataJson = JSON.stringify(Object.fromEntries(formData.entries()));
-    postData('http://localhost:3000/requests', formDataJson).then(() => {
-      closeMod();
-      setTimeout(() => {
-        openModalThanks(messageForUser.success);
-      }, 600);
-    }).catch(() => {
-      closeMod();
-      setTimeout(() => {
-        openModalThanks(messageForUser.error);
-      }, 600);
-    }).finally(() => {
-      statusMessage.remove();
-      form.reset();
-    });
-  });
-}
-function closeMod() {
-  const activeModal = document.querySelector('.modal.open');
-  if (!activeModal) return;
-  bodyController.unLockBody();
-  activeModal.classList.remove('open');
-  activeModal.removeEventListener('click', closeModal);
-  window.removeEventListener('keydown', closeModalOnButton);
-}
-function openModalThanks(message) {
-  if (!bodyController.isInteraction) return;
-  const thanksModal = document.querySelector('#thanks-modal'),
-    modalTitle = thanksModal.querySelector('.modal__title');
-  modalTitle.textContent = message;
-  bodyController.lockBody();
-  thanksModal.classList.add('open');
-  thanksModal.addEventListener('click', closeModal);
-  window.addEventListener('keydown', closeModalOnButton);
-}
-axios.get('http://localhost:3000/menu').then(response => {
-  response.data.forEach(_ref => {
+getData('http://localhost:3000/menu').then(data => {
+  data.forEach(_ref => {
     let {
       img,
       altimg,
@@ -256,19 +93,9 @@ axios.get('http://localhost:3000/menu').then(response => {
       descr,
       price
     } = _ref;
-    new MenuCard(img, altimg, title, descr, price).createElement('.menu__field .container');
+    new MenuCard(img, altimg, title, descr, price, 'menu__item').createElement('.menu__field .container');
   });
 });
-
-// getData('http://localhost:3000/menu')
-// 	.then(data => {
-// 		data.forEach(({ img, altimg, title, descr, price }) => {
-// 			new MenuCard(img, altimg, title, descr, price).createElement(
-// 				'.menu__field .container'
-// 			);
-// 		});
-// 	})
-// 	.catch(e => console.log(e));
 /******/ })()
 ;
 //# sourceMappingURL=script.js.map
