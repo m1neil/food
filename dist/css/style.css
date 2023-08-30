@@ -280,6 +280,7 @@ a {
   line-height: 21px;
 }
 .offer__slider {
+  position: relative;
   width: 650px;
   margin-top: 50px;
   display: flex;
@@ -294,6 +295,7 @@ a {
   color: rgba(0, 0, 0, 0.5);
 }
 .offer__slider-wrapper {
+  overflow: hidden;
   width: 100%;
   margin-top: 15px;
   box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.25);
@@ -315,10 +317,37 @@ a {
   width: 100%;
   height: 390px;
 }
+.offer__slide._hide {
+  display: none;
+}
 .offer__slide img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+.offer__slides {
+  display: flex;
+  transition: all 0.3s ease-in-out 0s;
+}
+.offer__pagination {
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  column-gap: 10px;
+  flex-wrap: wrap;
+}
+.offer__btn-pagination {
+  width: 20px;
+  height: 10px;
+  background-color: rgba(255, 255, 255, 0.5215686275);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease 0s;
+}
+.offer__btn-pagination_active {
+  background-color: #fff;
 }
 
 .calculating {
@@ -603,6 +632,10 @@ body.lock {
   opacity: 1;
   visibility: visible;
 }
+.modal__loading {
+  margin-top: 15px;
+  text-align: center;
+}
 .modal__dialog {
   max-width: 500px;
   margin: 40px auto;
@@ -657,4 +690,13 @@ body.lock {
   margin-top: 25px;
   font-size: 18px;
   text-align: center;
+}
+
+input.calculating__choose-item {
+  border: 1px solid transparent;
+  transition: all 0.3s;
+}
+
+input.calculating__choose-item.error {
+  border: 1px solid red;
 }

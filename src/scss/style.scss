@@ -18,3 +18,12 @@
 	font-size: 18px;
 	text-align: center;
 }
+
+input.calculating__choose-item {
+	border: 1px solid transparent;
+	transition: all 0.3s;
+}
+
+input.calculating__choose-item.error {
+	border: 1px solid red;
+}
