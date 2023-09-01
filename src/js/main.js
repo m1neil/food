@@ -21,7 +21,6 @@ const tabs = () => {
 		tabNavItems.forEach((item, i) => {
 			if (item === target) {
 				if (tabContents.length < i + 1 || tabNavItems.length < i + 1) return;
-
 				hideAllTabContents();
 				removeActiveClassTabNavItems();
 				showCurrentTabContent(i);
@@ -430,10 +429,6 @@ function clearActive(activeClass, dataAttribute, value) {
 		})
 	}
 }
-
-
-
-
 
 const result = document.querySelector('.calculating__result span');
 const dataWrappers = document.querySelectorAll('[data-info]');
